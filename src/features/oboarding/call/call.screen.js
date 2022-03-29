@@ -8,6 +8,7 @@ import {
   Alert,
 } from 'react-native';
 import styles from './call.styles';
+import {Auth} from 'aws-amplify';
 import {validateFrenchPhoneNumber} from './call.helpers';
 
 class Call extends React.Component {
@@ -44,8 +45,25 @@ class Call extends React.Component {
       canGo,
     });
   };
-  showConfirmCode = () => {
+  showConfirmCode = async () => {
     if (this.state.canGo) {
+      console.log(this.state.phone);
+      try {
+        const {user} = await Auth.signUp({
+          username: '+33' + this.state.phone,
+          password: 'azerty',
+        });
+        console.log('utilisateur créé:', user);
+      } catch (error) {
+        console.log('error signing up:', error);
+        /*Auth.forgotPassword('+33687783534')
+                  .then(data => console.log(data))
+                  .catch(err => console.log(err));
+          // Collect confirmation code and new password, then
+          Auth.forgotPasswordSubmit(username, code, new_password)
+                  .then(data => console.log(data))
+                  .catch(err => console.log(err));*/
+      }
       this.props.navigation.navigate('confirmCode', {
         phone: this.state.phone,
       });
